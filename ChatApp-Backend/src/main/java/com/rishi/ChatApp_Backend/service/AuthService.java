@@ -1,6 +1,7 @@
 package com.rishi.ChatApp_Backend.service;
 
 import com.rishi.ChatApp_Backend.dto.AuthResponse;
+import com.rishi.ChatApp_Backend.dto.LoginRequest;
 import com.rishi.ChatApp_Backend.dto.RegisterRequest;
 import com.rishi.ChatApp_Backend.model.User;
 import com.rishi.ChatApp_Backend.repository.UserRepository;
@@ -30,6 +31,17 @@ public class AuthService {
         User saved = userRepository.save(user);
 
         return mapToResponse(saved);
+    }
+
+    public AuthResponse login(LoginRequest request) {
+
+        User existingUser = userRepository.findByEmail(request.getEmail());
+
+        if(existingUser != null && passwordEncoder.matches(request.getPassword(),existingUser.getPassword())) {
+            return mapToResponse(existingUser);
+        }
+
+         throw new RuntimeException("Invalid User");
     }
 
     public AuthResponse mapToResponse(User user) {
