@@ -14,10 +14,12 @@ public class AuthService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
-    public AuthService(UserRepository userRepository,PasswordEncoder passwordEncoder) {
+    public AuthService(UserRepository userRepository,PasswordEncoder passwordEncoder,JwtService jwtService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
     }
 
     public AuthResponse register(RegisterRequest request) {
@@ -37,11 +39,21 @@ public class AuthService {
 
         User existingUser = userRepository.findByEmail(request.getEmail());
 
-        if(existingUser != null && passwordEncoder.matches(request.getPassword(),existingUser.getPassword())) {
-            return mapToResponse(existingUser);
+        if(existingUser == null) {
+            throw new RuntimeException("User not Found");
         }
 
-         throw new RuntimeException("Invalid User");
+        boolean isPasswordValid = passwordEncoder.matches(request.getPassword(), existingUser.getPassword());
+
+        if(!isPasswordValid) {
+            throw new RuntimeException("Password is not Correct");
+        }
+
+        String token = jwtService.generateToken(existingUser);
+
+        System.out.println("Token : "+token);
+
+        return new AuthResponse(token,existingUser);
     }
 
     public AuthResponse mapToResponse(User user) {
