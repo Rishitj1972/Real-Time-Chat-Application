@@ -46,12 +46,10 @@ public class AuthService {
         boolean isPasswordValid = passwordEncoder.matches(request.getPassword(), existingUser.getPassword());
 
         if(!isPasswordValid) {
-            throw new RuntimeException("Password is not Correct");
+            throw new RuntimeException("Invalid email or password");
         }
 
         String token = jwtService.generateToken(existingUser);
-
-        System.out.println("Token : "+token);
 
         return new AuthResponse(token,existingUser);
     }
