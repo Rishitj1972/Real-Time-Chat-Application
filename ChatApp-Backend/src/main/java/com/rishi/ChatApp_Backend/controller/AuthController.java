@@ -4,7 +4,6 @@ import com.rishi.ChatApp_Backend.dto.AuthResponse;
 import com.rishi.ChatApp_Backend.dto.LoginRequest;
 import com.rishi.ChatApp_Backend.dto.RegisterRequest;
 import com.rishi.ChatApp_Backend.service.AuthService;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;

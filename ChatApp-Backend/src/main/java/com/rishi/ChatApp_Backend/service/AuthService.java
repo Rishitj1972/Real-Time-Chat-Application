@@ -40,7 +40,7 @@ public class AuthService {
         User existingUser = userRepository.findByEmail(request.getEmail());
 
         if(existingUser == null) {
-            throw new RuntimeException("User not Found");
+            throw new RuntimeException("Invalid Email or Password");
         }
 
         boolean isPasswordValid = passwordEncoder.matches(request.getPassword(), existingUser.getPassword());

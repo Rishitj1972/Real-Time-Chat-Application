@@ -45,16 +45,23 @@ public class JwtService {
         return claims.getSubject();
     }
 
-    public boolean isTokenValid(String token) {
+    public boolean isTokenValid(String token, User user) {
         try {
-            Jwts.parserBuilder()
-                    .setSigningKey(key)
-                    .build()
-                    .parseClaimsJwt(token);
+            String email = extractEmail(token);
 
-            return true;
+            return email.equals(user.getEmail()) && !isTokenExpired(token);
         } catch (Exception e) {
             return false;
         }
+    }
+
+    public boolean isTokenExpired(String token) {
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+
+        return claims.getExpiration().before(new Date());
     }
 }
