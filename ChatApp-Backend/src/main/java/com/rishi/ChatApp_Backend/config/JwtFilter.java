@@ -42,6 +42,10 @@ public class JwtFilter extends OncePerRequestFilter {
 
                     User user = userRepository.findByEmail(email);
 
+                        if(user == null) {
+                            throw new RuntimeException("No Users");
+                        }
+
                     if(jwtService.isTokenValid(token,user)) {
                         UsernamePasswordAuthenticationToken authenticationToken =
                                 new UsernamePasswordAuthenticationToken(email, null, new ArrayList<>());

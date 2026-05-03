@@ -30,9 +30,14 @@ public class AuthService {
 
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
-        User saved = userRepository.save(user);
+        if(userRepository.findByEmail(request.getEmail()) != null) {
+            throw new RuntimeException("User Already Exists");
+        }
 
-        return mapToResponse(saved);
+        User saved = userRepository.save(user);
+        String token = jwtService.generateToken(saved);
+
+        return mapToResponse(saved,token);
     }
 
     public AuthResponse login(LoginRequest request) {
@@ -54,12 +59,13 @@ public class AuthService {
         return new AuthResponse(token,existingUser);
     }
 
-    public AuthResponse mapToResponse(User user) {
+    public AuthResponse mapToResponse(User user,String token) {
 
         AuthResponse dto = new AuthResponse();
         dto.setId(user.getId());
         dto.setEmail(user.getEmail());
         dto.setUsername(user.getUsername());
+        dto.setToken(token);
 
         return dto;
     }
